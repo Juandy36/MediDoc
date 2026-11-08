@@ -1,9 +1,17 @@
 import { defineConfig } from "prisma/config";
 
+// En local carga backend/.env. En Vercel no existe el archivo y las variables
+// vienen del entorno del proyecto.
+try {
+  process.loadEnvFile(".env");
+} catch {
+  // sin .env: se usan las variables del entorno
+}
+
 // Las migraciones usan la conexión directa (sin pooler) de Neon.
 // `prisma generate` no necesita conexión, por eso el valor puede faltar.
 export default defineConfig({
   schema: "prisma/schema.prisma",
   migrations: { path: "prisma/migrations" },
-  datasource: { url: process.env.DIRECT_DATABASE_URL ?? "" },
+  datasource: { url: process.env.DATABASE_URL_UNPOOLED ?? "" },
 });
