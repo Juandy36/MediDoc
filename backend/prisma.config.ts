@@ -1,9 +1,9 @@
 import { defineConfig } from "prisma/config";
 
-// En local carga backend/.env. En Vercel no existe el archivo y las variables
-// vienen del entorno del proyecto.
+// En local carga backend/.env (o el archivo indicado en ENV_FILE, p. ej. .env.production
+// para migrar producción a mano). En Vercel no existe y las variables vienen del entorno.
 try {
-  process.loadEnvFile(".env");
+  process.loadEnvFile(process.env.ENV_FILE ?? ".env");
 } catch {
   // sin .env: se usan las variables del entorno
 }

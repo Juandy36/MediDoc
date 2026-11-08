@@ -1,4 +1,5 @@
-// Solo para desarrollo local. En Vercel se usa el export default de index.ts.
+// Solo para desarrollo local (no se llama server.ts: Vercel podría tomarlo como entrada).
+// En Vercel se usa el export default de index.ts.
 import { serve } from "@hono/node-server";
 import app from "./index";
 
