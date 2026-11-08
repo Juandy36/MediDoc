@@ -24,6 +24,9 @@ export function fixtures() {
     async grant(userId: string, personId: string, role: Role) {
       return db().membership.create({ data: { userId, personId, role } });
     },
+    trackPerson: (id: string) => {
+      personIds.push(id);
+    },
     trackUserByEmail: async (email: string) => {
       const u = await db().user.findUnique({ where: { email } });
       if (u) userIds.push(u.id);
@@ -32,6 +35,7 @@ export function fixtures() {
       // Personas primero (borra Memberships e Invitations en cascada), luego usuarios (y sus sesiones).
       await db().person.deleteMany({ where: { id: { in: personIds } } });
       await db().user.deleteMany({ where: { id: { in: userIds } } });
+      await db().auditLog.deleteMany({ where: { OR: [{ personId: { in: personIds } }, { userId: { in: userIds } }] } });
     },
   };
 }

@@ -40,10 +40,59 @@ export const requestUploadSchema = documentMetaSchema.extend({
   sizeBytes: z.number().int().positive().max(MAX_FILE_BYTES),
 });
 
+export const updatePersonSchema = z.object({
+  name: z.string().trim().min(1).max(120),
+  birthDate: dateOnlySchema.nullable(),
+});
+
 export const inviteSchema = z.object({
-  email: z.email().transform((e) => e.toLowerCase()),
+  email: z.email().transform((e) => e.trim().toLowerCase()),
   role: roleSchema,
 });
+
+export const changeRoleSchema = z.object({ role: roleSchema });
+
+export const ROLE_LABELS: Record<Role, string> = {
+  OWNER: "Propietario",
+  EDITOR: "Editor",
+  VIEWER: "Lector",
+};
+
+// ---- Respuestas de la API ----
+
+export type PersonSummary = {
+  id: string;
+  name: string;
+  birthDate: string | null;
+  role: Role;
+};
+
+export type AccessEntry = {
+  userId: string;
+  email: string;
+  name: string | null;
+  role: Role;
+  isMe: boolean;
+};
+
+export type PendingInvitation = {
+  id: string;
+  email: string;
+  role: Role;
+  createdAt: string;
+};
+
+export type AccessList = { members: AccessEntry[]; invitations: PendingInvitation[] };
+
+export type AuditAction = "UPLOAD" | "VIEW" | "UPDATE" | "DELETE" | "SHARE" | "UNSHARE";
+
+export type AuditEntry = {
+  id: string;
+  action: AuditAction;
+  userEmail: string | null;
+  documentId: string | null;
+  createdAt: string;
+};
 
 /** Formatea "YYYY-MM-DD" como fecha local sin pasar por new Date(string), que interpreta UTC. */
 export function formatDateOnly(value: string, locale = "es"): string {

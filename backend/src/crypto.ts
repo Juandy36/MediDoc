@@ -1,4 +1,5 @@
 import { createCipheriv, createDecipheriv, randomBytes } from "node:crypto";
+import { env } from "./env";
 
 // Formato: v1:<iv b64>:<authTag b64>:<ciphertext b64>
 const VERSION = "v1";
@@ -37,4 +38,11 @@ export function createFieldCipher(base64Key: string) {
     encryptOptional: (v: string | null | undefined) => (v == null ? null : encrypt(v)),
     decryptOptional: (v: string | null | undefined) => (v == null ? null : decrypt(v)),
   };
+}
+
+let shared: ReturnType<typeof createFieldCipher> | undefined;
+
+/** Cifrador con la clave de FIELD_ENCRYPTION_KEY. */
+export function fieldCipher() {
+  return (shared ??= createFieldCipher(env().FIELD_ENCRYPTION_KEY));
 }
