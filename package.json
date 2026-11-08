@@ -1,0 +1,13 @@
+{
+  "name": "medidoc",
+  "private": true,
+  "packageManager": "pnpm@11.20.0",
+  "scripts": {
+    "prepare": "git config core.hooksPath .githooks",
+    "dev:backend": "pnpm --filter backend dev",
+    "dev:frontend": "pnpm --filter frontend dev",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm --filter backend test",
+    "secrets:scan": "gitleaks git --redact -v"
+  }
+}

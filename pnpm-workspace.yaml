@@ -1,0 +1,10 @@
+packages:
+  - frontend
+  - backend
+  - packages/*
+allowBuilds:
+  '@prisma/engines': true
+  esbuild: true
+  prisma: true
+  sharp: false
+  unrs-resolver: false

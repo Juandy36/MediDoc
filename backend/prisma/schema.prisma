@@ -1,0 +1,117 @@
+// Campos marcados "cifrado" contienen texto AES-256-GCM (ver src/crypto.ts).
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  OWNER
+  EDITOR
+  VIEWER
+}
+
+enum Category {
+  LABORATORIO
+  IMAGENOLOGIA
+  RECETA
+  OTRO
+}
+
+enum AuditAction {
+  UPLOAD
+  VIEW
+  UPDATE
+  DELETE
+  SHARE
+  UNSHARE
+}
+
+model User {
+  id          String       @id @default(cuid())
+  email       String       @unique
+  name        String?
+  createdAt   DateTime     @default(now())
+  memberships Membership[]
+  sessions    Session[]
+}
+
+model Session {
+  id         String   @id // sha256 (hex) del token de la cookie; el token nunca se guarda
+  userId     String
+  expiresAt  DateTime
+  lastSeenAt DateTime @default(now())
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Person {
+  id          String       @id @default(cuid())
+  name        String // cifrado
+  birthDate   String? // cifrado (YYYY-MM-DD)
+  createdAt   DateTime     @default(now())
+  memberships Membership[]
+  documents   Document[]
+  invitations Invitation[]
+}
+
+model Membership {
+  userId    String
+  personId  String
+  role      Role
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  person    Person   @relation(fields: [personId], references: [id], onDelete: Cascade)
+
+  @@id([userId, personId])
+  @@index([personId])
+}
+
+model Invitation {
+  id         String    @id @default(cuid())
+  email      String // minúsculas
+  personId   String
+  role       Role
+  invitedBy  String
+  createdAt  DateTime  @default(now())
+  acceptedAt DateTime?
+  person     Person    @relation(fields: [personId], references: [id], onDelete: Cascade)
+
+  @@unique([email, personId])
+  @@index([email])
+}
+
+model Document {
+  id         String    @id @default(cuid())
+  personId   String
+  title      String // cifrado
+  category   Category
+  examDate   DateTime  @db.Date
+  storageKey String    @unique
+  mimeType   String
+  sizeBytes  Int
+  notes      String? // cifrado
+  uploadedBy String
+  createdAt  DateTime  @default(now())
+  deletedAt  DateTime?
+  person     Person    @relation(fields: [personId], references: [id], onDelete: Restrict)
+
+  @@index([personId, deletedAt, examDate])
+}
+
+model AuditLog {
+  id         String      @id @default(cuid())
+  userId     String
+  personId   String?
+  action     AuditAction
+  documentId String?
+  createdAt  DateTime    @default(now())
+
+  @@index([personId, createdAt])
+}

@@ -1,0 +1,37 @@
+# --- Secretos: NUNCA en git (repo público) ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+credentials*.json
+service-account*.json
+
+# --- Datos de pacientes / archivos subidos ---
+uploads/
+storage/
+*.dump
+*.sql.gz
+backups/
+
+# --- Dependencias y builds ---
+node_modules/
+.pnpm-store/
+.next/
+out/
+dist/
+build/
+coverage/
+*.tsbuildinfo
+next-env.d.ts
+backend/src/generated/
+
+# --- Vercel ---
+.vercel
+
+# --- Sistema / editor ---
+.DS_Store
+Thumbs.db
+*.log

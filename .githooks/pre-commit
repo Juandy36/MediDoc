@@ -1,0 +1,13 @@
+#!/bin/sh
+# Bloquea commits que contengan secretos. El repo es público.
+if ! command -v gitleaks >/dev/null 2>&1; then
+  echo "ERROR: gitleaks no está instalado. Instálalo con: winget install gitleaks" >&2
+  echo "El commit se bloquea para proteger el repositorio público." >&2
+  exit 1
+fi
+# Bloquea también cualquier archivo .env que no sea .env.example
+if git diff --cached --name-only | grep -E '(^|/)\.env($|\.)' | grep -v '\.env\.example$' >/dev/null; then
+  echo "ERROR: estás intentando commitear un archivo .env. Abortado." >&2
+  exit 1
+fi
+exec gitleaks git --pre-commit --staged --redact -v
