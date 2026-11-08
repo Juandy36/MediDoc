@@ -35,10 +35,31 @@ export const documentMetaSchema = z.object({
   notes: z.string().trim().max(2000).optional(),
 });
 
-export const requestUploadSchema = documentMetaSchema.extend({
+export type AllowedMimeType = (typeof ALLOWED_MIME_TYPES)[number];
+
+/** Paso 1: pedir una URL firmada para subir el archivo directo al almacenamiento. */
+export const uploadRequestSchema = z.object({
   mimeType: z.enum(ALLOWED_MIME_TYPES),
   sizeBytes: z.number().int().positive().max(MAX_FILE_BYTES),
 });
+
+/** Paso 2: confirmar la subida y registrar el documento. */
+export const confirmUploadSchema = documentMetaSchema.extend({
+  uploadId: z.string().regex(/^[a-f0-9]{32}$/),
+});
+
+export type UploadTicket = { uploadId: string; url: string; headers: Record<string, string> };
+
+export type DocumentSummary = {
+  id: string;
+  title: string;
+  category: Category;
+  examDate: string; // YYYY-MM-DD
+  notes: string | null;
+  mimeType: AllowedMimeType;
+  sizeBytes: number;
+  createdAt: string;
+};
 
 export const updatePersonSchema = z.object({
   name: z.string().trim().min(1).max(120),

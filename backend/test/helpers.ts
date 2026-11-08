@@ -33,6 +33,7 @@ export function fixtures() {
     },
     async cleanup() {
       // Personas primero (borra Memberships e Invitations en cascada), luego usuarios (y sus sesiones).
+      await db().document.deleteMany({ where: { personId: { in: personIds } } });
       await db().person.deleteMany({ where: { id: { in: personIds } } });
       await db().user.deleteMany({ where: { id: { in: userIds } } });
       await db().auditLog.deleteMany({ where: { OR: [{ personId: { in: personIds } }, { userId: { in: userIds } }] } });

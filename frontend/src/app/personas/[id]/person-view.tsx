@@ -7,6 +7,7 @@ import { type FormEvent, useState } from "react";
 import { AppShell } from "@/components/app-shell";
 import { errorMessage } from "@/lib/messages";
 import { useApiData, useMutation } from "@/lib/use-api";
+import { Documents } from "./documents";
 
 export function PersonView() {
   return (
@@ -61,10 +62,7 @@ function Person() {
       )}
       {del.error && <p className="alert-error">{errorMessage(del.error)}</p>}
 
-      <section className="card">
-        <h2 className="font-medium">Documentos</h2>
-        <p className="mt-1 text-sm text-zinc-500">Pronto podrás subir y consultar exámenes aquí.</p>
-      </section>
+      <Documents personId={p.id} role={p.role} />
     </>
   );
 }

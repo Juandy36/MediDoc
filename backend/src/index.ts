@@ -5,6 +5,7 @@ import { type AppEnv, loadSession, requireSameOrigin } from "./middleware";
 import { authRoutes } from "./routes/auth";
 import { personasRoutes } from "./routes/personas";
 import { compartirRoutes } from "./routes/compartir";
+import { documentosRoutes } from "./routes/documentos";
 
 // Todas las rutas viven bajo /api: el frontend las reenvía con un rewrite.
 const app = new Hono<AppEnv>().basePath("/api");
@@ -22,6 +23,7 @@ app.get("/health", (c) => c.json({ ok: true }));
 app.route("/auth", authRoutes);
 app.route("/personas", personasRoutes);
 app.route("/compartir", compartirRoutes);
+app.route("/", documentosRoutes);
 
 app.notFound((c) => c.json({ error: "not_found" }, 404));
 app.onError((err, c) => {
