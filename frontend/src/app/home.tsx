@@ -71,7 +71,11 @@ function People() {
                   {p.birthDate ? `Nació el ${formatDateOnly(p.birthDate)}` : "Sin fecha de nacimiento"}
                 </p>
               </div>
-              <span className="badge shrink-0">{ROLE_LABELS[p.role]}</span>
+              {p.role !== "OWNER" && (
+                <span className="badge shrink-0" title="Otra persona te dio acceso">
+                  Compartido contigo · {ROLE_LABELS[p.role]}
+                </span>
+              )}
             </Link>
           </li>
         ))}

@@ -47,8 +47,8 @@ function Person() {
           <div>
             <h1 className="text-2xl font-semibold tracking-tight">{p.name}</h1>
             <p className="text-sm text-zinc-500">
-              {p.birthDate ? `Nació el ${formatDateOnly(p.birthDate)}` : "Sin fecha de nacimiento"} ·{" "}
-              <span className="badge">{ROLE_LABELS[p.role]}</span>
+              {p.birthDate ? `Nació el ${formatDateOnly(p.birthDate)}` : "Sin fecha de nacimiento"}
+              {!isOwner && <span className="badge ml-2">Compartido contigo · {ROLE_LABELS[p.role]}</span>}
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
