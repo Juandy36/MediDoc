@@ -39,3 +39,33 @@ export function fixtures() {
     },
   };
 }
+
+export const ORIGIN = "http://localhost:3000";
+
+/** Usuario de prueba con sesión y un cliente HTTP que envía su cookie. */
+export async function apiClient(fx: ReturnType<typeof fixtures>) {
+  const { createSession } = await import("../src/auth/session");
+  const { default: app } = await import("../src/index");
+  const user = await fx.user();
+  const { token } = await createSession(user.id);
+  const call = (method: string, path: string, body?: unknown) =>
+    app.request(`/api${path}`, {
+      method,
+      headers: { cookie: `medidoc_session=${token}`, origin: ORIGIN, "content-type": "application/json" },
+      body: body === undefined ? undefined : JSON.stringify(body),
+    });
+  return { user, token, call };
+}
+
+/** Crea una persona vía API (el cliente queda como OWNER) y la registra para limpieza. */
+export async function apiCreatePerson(
+  fx: ReturnType<typeof fixtures>,
+  owner: Awaited<ReturnType<typeof apiClient>>,
+  name = "Ana Pérez",
+) {
+  const res = await owner.call("POST", "/personas", { name, birthDate: "2015-03-09" });
+  if (res.status !== 201) throw new Error(`crear persona: ${res.status}`);
+  const { person } = (await res.json()) as { person: { id: string; name: string; birthDate: string | null; role: Role } };
+  fx.trackPerson(person.id);
+  return person;
+}

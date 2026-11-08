@@ -26,11 +26,18 @@ function People() {
           <h1 className="text-2xl font-semibold tracking-tight">Familia</h1>
           <p className="text-sm text-zinc-500">Personas cuyos exámenes médicos guardas.</p>
         </div>
-        {!creating && (
-          <button className="btn-primary" onClick={() => setCreating(true)}>
-            + Nueva persona
-          </button>
-        )}
+        <div className="flex gap-2">
+          {data?.people.some((p) => p.role === "OWNER") && (
+            <Link href="/compartir" className="btn-secondary py-2">
+              Compartir
+            </Link>
+          )}
+          {!creating && (
+            <button className="btn-primary" onClick={() => setCreating(true)}>
+              + Nueva persona
+            </button>
+          )}
+        </div>
       </div>
 
       {creating && (

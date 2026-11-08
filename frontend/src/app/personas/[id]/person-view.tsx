@@ -53,7 +53,7 @@ function Person() {
           </div>
           <div className="flex flex-wrap gap-2">
             {canEdit && <button className="btn-secondary" onClick={() => setEditing(true)}>Editar</button>}
-            {isOwner && <Link className="btn-secondary" href={`/personas/${p.id}/compartir`}>Compartir</Link>}
+            {isOwner && <Link className="btn-secondary" href="/compartir">Compartir</Link>}
             {isOwner && <Link className="btn-secondary" href={`/personas/${p.id}/actividad`}>Actividad</Link>}
             {isOwner && <button className="btn-danger" onClick={remove} disabled={del.pending}>Eliminar</button>}
           </div>

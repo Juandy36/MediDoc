@@ -4,6 +4,7 @@ import { secureHeaders } from "hono/secure-headers";
 import { type AppEnv, loadSession, requireSameOrigin } from "./middleware";
 import { authRoutes } from "./routes/auth";
 import { personasRoutes } from "./routes/personas";
+import { compartirRoutes } from "./routes/compartir";
 
 // Todas las rutas viven bajo /api: el frontend las reenvía con un rewrite.
 const app = new Hono<AppEnv>().basePath("/api");
@@ -20,6 +21,7 @@ app.use(loadSession);
 app.get("/health", (c) => c.json({ ok: true }));
 app.route("/auth", authRoutes);
 app.route("/personas", personasRoutes);
+app.route("/compartir", compartirRoutes);
 
 app.notFound((c) => c.json({ error: "not_found" }, 404));
 app.onError((err, c) => {

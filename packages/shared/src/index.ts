@@ -45,12 +45,14 @@ export const updatePersonSchema = z.object({
   birthDate: dateOnlySchema.nullable(),
 });
 
-export const inviteSchema = z.object({
+/** Permisos de una cuenta sobre varias personas a la vez. null = sin acceso. */
+export const shareSchema = z.object({
   email: z.email().transform((e) => e.trim().toLowerCase()),
-  role: roleSchema,
+  access: z
+    .record(z.string().min(1).max(40), roleSchema.nullable())
+    .refine((a) => Object.keys(a).length > 0 && Object.keys(a).length <= 200, "Sin personas"),
 });
-
-export const changeRoleSchema = z.object({ role: roleSchema });
+export type ShareInput = z.input<typeof shareSchema>;
 
 export const ROLE_LABELS: Record<Role, string> = {
   OWNER: "Propietario",
@@ -67,22 +69,21 @@ export type PersonSummary = {
   role: Role;
 };
 
-export type AccessEntry = {
-  userId: string;
+/** Una cuenta (o invitado que aún no ha entrado) y sus permisos por persona. */
+export type SharedAccount = {
   email: string;
   name: string | null;
-  role: Role;
   isMe: boolean;
+  /** true si nunca ha iniciado sesión: sus permisos son invitaciones pendientes. */
+  pending: boolean;
+  access: Record<string, Role>;
 };
 
-export type PendingInvitation = {
-  id: string;
-  email: string;
-  role: Role;
-  createdAt: string;
+/** Personas de las que soy propietario y quién tiene acceso a ellas. */
+export type ShareOverview = {
+  people: { id: string; name: string }[];
+  accounts: SharedAccount[];
 };
-
-export type AccessList = { members: AccessEntry[]; invitations: PendingInvitation[] };
 
 export type AuditAction = "UPLOAD" | "VIEW" | "UPDATE" | "DELETE" | "SHARE" | "UNSHARE";
 
