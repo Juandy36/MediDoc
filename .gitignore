@@ -7,6 +7,7 @@
 *.p12
 *.pfx
 credentials*.json
+client_secret*.json
 service-account*.json
 
 # --- Datos de pacientes / archivos subidos ---
