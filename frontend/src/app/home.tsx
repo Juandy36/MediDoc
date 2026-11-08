@@ -22,7 +22,10 @@ function People() {
   return (
     <>
       <div className="flex items-center justify-between gap-4">
-        <h1 className="text-2xl font-semibold tracking-tight">Familia</h1>
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">Familia</h1>
+          <p className="text-sm text-zinc-500">Personas cuyos exámenes médicos guardas.</p>
+        </div>
         {!creating && (
           <button className="btn-primary" onClick={() => setCreating(true)}>
             + Nueva persona

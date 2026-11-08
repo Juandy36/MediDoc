@@ -50,23 +50,32 @@ function Share() {
           ← {person.data.person.name}
         </Link>
       </nav>
-      <h1 className="text-2xl font-semibold tracking-tight">Compartir</h1>
+      <div>
+        <h1 className="text-2xl font-semibold tracking-tight">Compartir los documentos de {person.data.person.name}</h1>
+        <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+          Elige qué cuentas de Google pueden entrar a MediDoc y ver los exámenes de {person.data.person.name}.
+        </p>
+      </div>
 
       <InviteForm personId={id} onInvited={access.reload} />
 
       {m.error && <p className="alert-error">{errorMessage(m.error)}</p>}
 
       <section className="card">
-        <h2 className="mb-3 font-medium">Con acceso</h2>
+        <h2 className="font-medium">Quién tiene acceso</h2>
+        <p className="mb-3 text-sm text-zinc-500">Cuentas que pueden ver los documentos de {person.data.person.name}.</p>
         <ul className="divide-y divide-zinc-200 dark:divide-zinc-800">
           {access.data.members.map((u) => (
             <li key={u.userId} className="flex flex-wrap items-center justify-between gap-3 py-3">
               <div className="min-w-0">
                 <p className="truncate text-sm font-medium">
-                  {u.name ?? u.email} {u.isMe && <span className="text-zinc-500">(tú)</span>}
+                  {u.name ?? u.email} {u.isMe && <span className="text-zinc-500">(tu cuenta)</span>}
                 </p>
                 <p className="truncate text-xs text-zinc-500">{u.email}</p>
               </div>
+              {u.isMe ? (
+                <span className="badge" title="Tu propio rol no se puede cambiar desde aquí">{ROLE_LABELS[u.role]}</span>
+              ) : (
               <div className="flex items-center gap-2">
                 <select
                   aria-label={`Rol de ${u.email}`}
@@ -77,12 +86,11 @@ function Share() {
                 >
                   {ROLES.map((r) => <option key={r} value={r}>{ROLE_LABELS[r]}</option>)}
                 </select>
-                {!u.isMe && (
-                  <button className="btn-danger" disabled={m.pending} onClick={() => removeMember(u.userId, u.email)}>
-                    Quitar
-                  </button>
-                )}
+                <button className="btn-danger" disabled={m.pending} onClick={() => removeMember(u.userId, u.email)}>
+                  Quitar
+                </button>
               </div>
+              )}
             </li>
           ))}
         </ul>
